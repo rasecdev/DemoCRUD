@@ -53,7 +53,9 @@
 
     </dl>
 
-    @using (Html.BeginForm()) {
+    @*Modificando o Begin Form para determinar um id. *@
+    @using (Html.BeginForm("Delete", "Livros", FormMethod.Post, new { id = "formCrud" }))
+    {
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">

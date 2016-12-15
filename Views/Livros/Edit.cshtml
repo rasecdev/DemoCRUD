@@ -7,7 +7,8 @@
 <h2>Edit</h2>
 
 
-@using (Html.BeginForm())
+@*Modificando o Begin Form para determinar um id. *@
+@using (Html.BeginForm("Edit", "Livros", FormMethod.Post, new { id = "formCrud" }))
 {
     @Html.AntiForgeryToken()
     

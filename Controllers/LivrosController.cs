@@ -140,16 +140,24 @@ namespace DemoCRUD.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Titulo,Autor,AnoEdicao,Valor,GeneroId")] Livro livro)
+        public JsonResult Edit([Bind(Include = "Id,Titulo,Autor,AnoEdicao,Valor,GeneroId")] Livro livro)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(livro).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+
+                //Retorno do Json Para quem chamar o Create.
+                return Json(new { resultado = true, mensagem = "Livro editado com sucesso!" });
             }
-            ViewBag.GeneroId = new SelectList(db.Generos, "Id", "Nome", livro.GeneroId);
-            return View(livro);
+            else
+            {
+                IEnumerable<ModelError> erros = ModelState.Values.SelectMany(item => item.Errors);
+
+                //Retorno do Json Para quem chamar o Create.
+                return Json(new { resultado = false, mensagem = erros });
+
+            }
         }
 
         // GET: Livros/Delete/5
@@ -170,12 +178,21 @@ namespace DemoCRUD.Controllers
         // POST: Livros/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public JsonResult DeleteConfirmed(int id)
         {
-            Livro livro = db.Livros.Find(id);
-            db.Livros.Remove(livro);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            try
+            {
+                Livro livro = db.Livros.Find(id);
+                db.Livros.Remove(livro);
+                db.SaveChanges();
+
+                return Json(new { resultado = true, mensagem = "Livro excluído com sucesso!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { resultado = false, mensagem = ex.Message });
+            }
+           
         }
 
         protected override void Dispose(bool disposing)
